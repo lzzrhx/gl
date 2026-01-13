@@ -7,15 +7,12 @@ import "core:os"
 import "core:log"
 import "core:mem"
 import "core:c"
-import "core:math"
 
 WINDOW_WIDTH  :: 800
 WINDOW_HEIGHT :: 600
 WINDOW_TITLE  :: "gl"
 GL_VERSION_MAJOR :: 3
 GL_VERSION_MINOR :: 3
-VERTEX_SHADER :: "./vertex.vs"
-FRAGMENT_SHADER :: "./fragment.fs"
 
 glfw_framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width: i32, height: i32) {
     gl.Viewport(0, 0, width, height)
@@ -51,7 +48,6 @@ main :: proc() {
     gl.Viewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
     glfw.SetFramebufferSizeCallback(window, glfw_framebuffer_size_callback)
 
-    /*
     success: i32
     info_log: [512]c.char
     // Compile and set vertex shader
@@ -90,22 +86,17 @@ main :: proc() {
     }
     gl.DeleteShader(vertex_shader)
     gl.DeleteShader(fragment_shader)
-    */
-    shader_program, ok := gl.load_shaders_file(VERTEX_SHADER, FRAGMENT_SHADER)
-    if !ok {
-        log.errorf("Shader loading failed.")
-        os.exit(1)
-    }
 
     // Set vertices using normalized device coordinates (-1 to 1)
     vertices := [?]f32 {
-        // Positions:     // Colors:
-         0.5, -0.5, 0.0,   1.0, 0.0, 0.0,
-        -0.5, -0.5, 0.0,   0.0, 1.0, 0.0,
-         0.0,  0.5, 0.0,   0.0, 0.0, 1.0,
+         0.5,  0.5, 0.0,
+         0.5, -0.5, 0.0,
+        -0.5, -0.5, 0.0,
+        -0.5,  0.5, 0.0,
     }
     indices := [?]u32 {
-        0, 1, 2,
+        0, 1, 3,
+        1, 2, 3,
     }
     // Declare vertex array object
     vao: u32
@@ -129,12 +120,9 @@ main :: proc() {
     gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
     // Copy the indices into the (currently bound) buffer memory
     gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, size_of(indices), raw_data(&indices), gl.STATIC_DRAW)
-    // Specify how to interpret vertex data (position)
-    gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * size_of(f32), 0)
+    // Specify how to interpret vertex data
+    gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * size_of(f32), 0)
     gl.EnableVertexAttribArray(0)
-    // Specify how to interpret vertex data (color)
-    gl.VertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * size_of(f32), 3 * size_of(f32))
-    gl.EnableVertexAttribArray(1)
 
     //gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 
@@ -146,13 +134,6 @@ main :: proc() {
 
         // Set the shader program
         gl.UseProgram(shader_program)
-
-        // Set the vertex color using uniform
-        //time := glfw.GetTime();
-        //green := f32((math.sin_f64(time) / 2.0) + 0.5)
-        //vertex_color_location := gl.GetUniformLocation(shader_program, "customColor")
-        //gl.Uniform4f(vertex_color_location, 0.0, green, 0.0, 1.0)
-
         // Bind vertex array object
         gl.BindVertexArray(vao)
         // Draw primitves

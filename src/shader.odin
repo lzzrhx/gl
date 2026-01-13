@@ -1,18 +1,15 @@
 package main
 
-vertex_shader_source: cstring = 
-`#version 330 core
-layout (location = 0) in vec3 aPos;
-void main()
-{
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}`
+import gl "vendor:OpenGL"
 
-fragment_shader_source: cstring = 
-`#version 330 core
-out vec4 FragColor;
+shader_set_bool :: proc(id: u32, name: cstring, value: bool) {
+    gl.Uniform1i(gl.GetUniformLocation(id, name), i32(value))
+}
 
-void main()
-{
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}`
+shader_set_int :: proc(id: u32, name: cstring, value: i32) {
+    gl.Uniform1i(gl.GetUniformLocation(id, name), value)
+}
+
+shader_set_float :: proc(id: u32, name: cstring, value: f32) {
+    gl.Uniform1f(gl.GetUniformLocation(id, name), value)
+}

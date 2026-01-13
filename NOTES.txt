@@ -10,6 +10,10 @@
 
 - In modern OpenGL it is required to define at least a custom vertex and fragment shader, since there are no default vertex/fragment shaders on the GPU.
 
+- OpenGL shaders are written in the C-like language GLSL
+
+- Shaders are programs that get some data in, processes it, and outputs some data. The output of a shader is then fed into another shader in the next step in the graphics pipeline.
+
 - OpenGL only processes 3D coordinates when they're in a specific range between -1.0 and 1.0 on all 3 axes. All coordinates within this so called normalized device coordinates range will end up visible on the screen.
 
 - The graphics pipeline (* sections where custom shaders can be injected):
@@ -31,3 +35,37 @@
     + gl.STREAM_DRAW: The data is set only once and used by the GPU at most a few times.
     + gl.STATIC_DRAW: The data is set only once and used many times.
     + gl.DYNAMIC_DRAW: The data is changed a lot and used many times.
+
+- Vertex shader inputs are called vertex attributes, and there are a set maximum number of attributes allowed, limited by the hardware. Some hardware supports more, but OpenGL guarantees that there are always at least 16 4-component vertex attributes available.
+
+- The vertex shader should receive some form of input
+
+- The fragment shader requires a vec4 color output variable
+
+- GLSL data types:
+    + Boolean:                   bool
+    + Integer:                   int / uint
+    + Floating-point number:     float / double
+    + Vector (float):            vec2 / vec3 / vec 4
+
+- GLSL vectors:
+    + Vector (double):           dvec2 / dvec3 / dvec4
+    + Vector (integer):          ivec2 / ivec3 / ivec4
+    + Vector (unsigned integer): uvec2 / uvec3 / uvec4
+    + Vector (boolean):          bvec2 / bvec3 / bvec4
+
+- 3 ways to access the components of a vector:
+    + v.x, v.y, v.z, v.w
+    + v.r, v.g, v.r, v.a (used for colors)
+    + v.s, v.t, v.p, v.q (used for texture coordinates)
+
+- GLSL supports vector swizzling:
+    vec2 someVec;
+    vec4 differentVec = someVec.xyxx;
+    vec3 anotherVec = differentVec.zyw;
+    vec4 otherVec = someVec.xxxx + anotherVec.yxzy;
+
+- Vectors can be passed as arguments to vector constructor calls:
+    vec2 vect = vec2(0.5, 0.7);
+    vec4 result = vec4(vect, 0.0, 0.0);
+    vec4 otherResult = vec4(result.xyz, 1.0);
