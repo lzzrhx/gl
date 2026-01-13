@@ -1,0 +1,33 @@
+///////////////////////////////////////////////////////////////////////////////
+// NOTES
+///////////////////////////////////////////////////////////////////////////////
+
+- Learn OpenGL:
+    https://learnopengl.com/
+    https://www.amazon.co.uk/dp/9090332561
+
+- A fragment in OpenGL is all the data required for OpenGL to render a single pixel.
+
+- In modern OpenGL it is required to define at least a custom vertex and fragment shader, since there are no default vertex/fragment shaders on the GPU.
+
+- OpenGL only processes 3D coordinates when they're in a specific range between -1.0 and 1.0 on all 3 axes. All coordinates within this so called normalized device coordinates range will end up visible on the screen.
+
+- The graphics pipeline (* sections where custom shaders can be injected):
+    vertex data[] -> vertex shader* -> geometry shader* -> shape assembly -> rasterization -> fragment shader* -> tests and blending
+
+- Vertex shader: Takes a single vertex as input. Can transform 3D coordinates into different 3D coordinates, and allows for some basic processing on the vertex attributes.
+
+- Geometry shader: The output of the vertex shader is optionally passed to the geometry shader. Takes a collection of vertices that forms a primitive as input. Can generate other shapes by emitting new vertices to fomr new (or other) primitve(s).
+
+- Primitive assembly: Takes all the vertices from the vertex (or geometry) shader that form one or more primitives as input. Assembles all the point(s) in the primitive shape given.
+
+- Rasterization stage: The output of the primitve assembly stage is passed on and the resulting primitive(s) are mapped to the corresponding pixels on the final screen, resulting in framgents for the framgent shader to use. Before the fragment shaders run, clipping is performed, discarding all fragments that are outside the view.
+
+- Fragment shader: Takes the fragments from the rasterizer as input. Calculates the final color of a pixel. Usually the fragment shader contains data about the 3D scene that it can use to calculate the final pixel color (like lights, shadows, color of the light, etc.)
+
+- Alpha test and blending stage: This stage checks the corresponding depth (and stencil) value of the fragment and uses those to check if the resulting fragment is in from or behind other objects and should be discarded accordingly. Alpha values are also checked and objects are blended accordingly.
+
+- In gl.BufferData() there are three options for how to manage the given data:
+    + gl.STREAM_DRAW: The data is set only once and used by the GPU at most a few times.
+    + gl.STATIC_DRAW: The data is set only once and used many times.
+    + gl.DYNAMIC_DRAW: The data is changed a lot and used many times.
