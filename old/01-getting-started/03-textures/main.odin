@@ -7,7 +7,6 @@ import "core:math"
 import "core:mem"
 import "core:os"
 import "vendor:glfw"
-import "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 import stbi "vendor:stb/image"
 
@@ -165,12 +164,6 @@ main :: proc() {
         gl.ActiveTexture(gl.TEXTURE1)
         // Bind texture object (1)
         gl.BindTexture(gl.TEXTURE_2D, texture1)
-
-        // Apply transformation
-        transform : glsl.mat4 = 1
-        transform *= glsl.mat4Translate({0.5, -0.5, 0.0})
-        transform *= glsl.mat4Rotate({0, 0, 1}, f32(glfw.GetTime()))
-        shader_set_mat4(shader_program, "transform", transform)
 
         // Bind vertex array object
         gl.BindVertexArray(vao)
