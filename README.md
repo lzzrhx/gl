@@ -1,6 +1,6 @@
 # Learn OpenGL
 
-Going through the sections at [learnopengl.com](https://learnopengl.com/), but using the Odin programming language instead of C++.
+An attempt to complete the [learnopengl.com](https://learnopengl.com/) course, but using Odin instead of C++.
 
 > [!TIP]
 > See [NOTES.txt](NOTES.txt) for more info.
