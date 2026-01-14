@@ -106,14 +106,15 @@ main :: proc() {
     gl.VertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 6 * size_of(f32))
     gl.EnableVertexAttribArray(2)
 
-    // Load texture
-    texture: u32
-    gl.GenTextures(1, &texture)
-    gl.BindTexture(gl.TEXTURE_2D, texture)
+    // Load texture (0)
+    texture0: u32
+    img_width, img_height, img_channels: i32
+    gl.GenTextures(1, &texture0)
+    gl.BindTexture(gl.TEXTURE_2D, texture0)
     gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
     gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
     gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-    img_width, img_height, img_channels: i32
     img := stbi.load("../assets/container.jpg", &img_width, &img_height, &img_channels, 0)
     if img == nil {
         log.errorf("Failed to load texture image.")
@@ -123,6 +124,29 @@ main :: proc() {
     gl.GenerateMipmap(gl.TEXTURE_2D)
     stbi.image_free(img)
 
+    // Load texture (1)
+    texture1: u32
+    gl.GenTextures(1, &texture1)
+    gl.BindTexture(gl.TEXTURE_2D, texture1)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    stbi.set_flip_vertically_on_load(1)
+    img = stbi.load("../assets/awesomeface.png", &img_width, &img_height, &img_channels, 0)
+    if img == nil {
+        log.errorf("Failed to load texture image.")
+        os.exit(1)
+    }
+    gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, img_width, img_height, 0, gl.RGBA, gl.UNSIGNED_BYTE, img)
+    gl.GenerateMipmap(gl.TEXTURE_2D)
+    stbi.image_free(img)
+
+    // Set the shader program
+    gl.UseProgram(shader_program)
+    // Set the texture units for the shader samplers
+    shader_set_int(shader_program, "tex0", 0)
+    shader_set_int(shader_program, "tex1", 1)
 
     //gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 
@@ -132,10 +156,17 @@ main :: proc() {
         gl.ClearColor(0.2, 0.3, 0.3, 1.0)
         gl.Clear(gl.COLOR_BUFFER_BIT)
 
-        // Set the shader program
-        gl.UseProgram(shader_program)
-        // Bind texture object
-        gl.BindTexture(gl.TEXTURE_2D, texture)
+
+
+        // Set active texture (0)
+        gl.ActiveTexture(gl.TEXTURE0)
+        // Bind texture object (0)
+        gl.BindTexture(gl.TEXTURE_2D, texture0)
+        // Set active texture (1)
+        gl.ActiveTexture(gl.TEXTURE1)
+        // Bind texture object (1)
+        gl.BindTexture(gl.TEXTURE_2D, texture1)
+
         // Bind vertex array object
         gl.BindVertexArray(vao)
         // Draw primitves

@@ -1,3 +1,6 @@
 # Learn OpenGL
 
-Learning OpenGL by following [learnopengl.com](https://learnopengl.com/) and using GLFW and the Odin programming language.
+Going through the sections at [learnopengl.com](https://learnopengl.com/), but using the Odin programming language instead of C++.
+
+> [!TIP]
+> See [NOTES.txt](NOTES.txt) for more info.
