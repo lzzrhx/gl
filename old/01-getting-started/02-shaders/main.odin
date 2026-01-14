@@ -1,22 +1,21 @@
 package main
 
-import "core:c"
-import "core:fmt"
-import "core:log"
-import "core:math"
-import "core:mem"
-import "core:os"
-import "vendor:glfw"
 import gl "vendor:OpenGL"
-import stbi "vendor:stb/image"
+import "vendor:glfw"
+import "core:fmt"
+import "core:os"
+import "core:log"
+import "core:mem"
+import "core:c"
+import "core:math"
 
 WINDOW_WIDTH  :: 800
 WINDOW_HEIGHT :: 600
 WINDOW_TITLE  :: "gl"
 GL_VERSION_MAJOR :: 3
 GL_VERSION_MINOR :: 3
-VERTEX_SHADER :: "./shaders/vertex.vs"
-FRAGMENT_SHADER :: "./shaders/fragment.fs"
+VERTEX_SHADER :: "./vertex.vs"
+FRAGMENT_SHADER :: "./fragment.fs"
 
 glfw_framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width: i32, height: i32) {
     gl.Viewport(0, 0, width, height)
@@ -62,16 +61,14 @@ main :: proc() {
 
     // Set vertices using normalized device coordinates (-1 to 1)
     vertices := [?]f32 {
-        // Positions:      // Colors:       // Texture coords:
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0,
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0,
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0,
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0,
+        // Positions:     // Colors:
+         0.5, -0.5, 0.0,   1.0, 0.0, 0.0,
+        -0.5, -0.5, 0.0,   0.0, 1.0, 0.0,
+         0.0,  0.5, 0.0,   0.0, 0.0, 1.0,
     }
     // Set indices
     indices := [?]u32 {
-        0, 1, 3,
-        1, 2, 3,
+        0, 1, 2,
     }
 
     // Declare vertex array object
@@ -97,32 +94,11 @@ main :: proc() {
     // Copy the indices into the (currently bound) buffer memory
     gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, size_of(indices), raw_data(&indices), gl.STATIC_DRAW)
     // Specify how to interpret vertex data (position)
-    gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 0)
+    gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * size_of(f32), 0)
     gl.EnableVertexAttribArray(0)
     // Specify how to interpret vertex data (color)
-    gl.VertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 3 * size_of(f32))
+    gl.VertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * size_of(f32), 3 * size_of(f32))
     gl.EnableVertexAttribArray(1)
-    // Specify how to interpret vertex data (texture coords)
-    gl.VertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 6 * size_of(f32))
-    gl.EnableVertexAttribArray(2)
-
-    // Load texture
-    texture: u32
-    gl.GenTextures(1, &texture)
-    gl.BindTexture(gl.TEXTURE_2D, texture)
-    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
-    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
-    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-    img_width, img_height, img_channels: i32
-    img := stbi.load("../assets/container.jpg", &img_width, &img_height, &img_channels, 0)
-    if img == nil {
-        log.errorf("Failed to load texture image.")
-        os.exit(1)
-    }
-    gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, img_width, img_height, 0, gl.RGB, gl.UNSIGNED_BYTE, img)
-    gl.GenerateMipmap(gl.TEXTURE_2D)
-    stbi.image_free(img)
-
 
     //gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 
@@ -134,8 +110,6 @@ main :: proc() {
 
         // Set the shader program
         gl.UseProgram(shader_program)
-        // Bind texture object
-        gl.BindTexture(gl.TEXTURE_2D, texture)
         // Bind vertex array object
         gl.BindVertexArray(vao)
         // Draw primitves

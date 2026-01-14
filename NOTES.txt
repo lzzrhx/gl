@@ -1,10 +1,85 @@
 ///////////////////////////////////////////////////////////////////////////////
-// NOTES
+// This documents contains notes for:
+// Learn OpenGL
+// https://learnopengl.com/
 ///////////////////////////////////////////////////////////////////////////////
 
+ SECTIONS:
+   #1: COURSE OVERVIEW
+   #2: NOTES
+
+
+
+  #1 | COURSE OVERVIEW:
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+   [-]  1: Getting started
+     [X]  1.1:  OpenGL
+     [X]  1.2:  Creating a window
+     [X]  1.3:  Hello Window
+     [X]  1.4:  Hello Triangle
+     [X]  1.5:  Shaders
+     [-]  1.6:  Textures
+     [-]  1.7:  Transformations
+     [-]  1.8:  Coordinate Systems
+     [-]  1.9:  Camera
+     [-]  1.10: Review
+   [-]  2: Lighting
+     [-]  2.1:  Colors
+     [-]  2.2:  Basic Lighting
+     [-]  2.3:  Materials
+     [-]  2.4:  Lighting maps
+     [-]  2.5:  Light casters
+     [-]  2.6:  Multiple lights
+     [-]  2.7:  Review
+   [-]  3: Model Loading
+     [-]  3.1:  Assimp
+     [-]  3.2:  Mesh
+     [-]  3.3:  Model
+   [-]  4: Advanced OpenGL
+     [-]  4.1:  Depth testing
+     [-]  4.2:  Stencil testing
+     [-]  4.3:  Blending
+     [-]  4.4:  Face culling
+     [-]  4.5:  Framebuffers
+     [-]  4.6:  Cubnemaps
+     [-]  4.7:  Advanced Data
+     [-]  4.8:  Advanced GLSL
+     [-]  4.9:  Geometry Shader
+     [-]  4.10: Instancing
+     [-]  4.11: Anti Aliasing
+   [-]  5: Advanced Lighting
+     [-]  5.1:  Advanced Lighting
+     [-]  5.2:  Gamma Correction
+     [-]  5.3:  Shadows
+       [-]  5.3.1:  Shadow Mapping
+       [-]  5.3.2:  Point Shadows
+     [-]  5.4:  Normal Mapping
+     [-]  5.5:  Parallax Mapping
+     [-]  5.6:  HDR
+     [-]  5.7:  Bloom
+     [-]  5.8:  Deferred Shading
+     [-]  5.9:  SSAO
+   [-]  6: PBR
+     [-]  6.1:  Theory
+     [-]  6.2:  Lighting
+     [-]  6.3:  IBL
+       [-]  6.3.1:  Diffuse irradiance
+       [-]  6.3.1:  Specular IBL
+   [-]  7: In Practice
+   [-]  8: Guest Articles
+
+   [X] COMPLETED / [-] NOT COMPLETED
+
+
+
+  #2 | NOTES:
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
 - Learn OpenGL:
-    https://learnopengl.com/
-    https://www.amazon.co.uk/dp/9090332561
+    Website: https://learnopengl.com/
+    PDF:     https://learnopengl.com/book/book_pdf.pdf
+    Print:   https://www.amazon.co.uk/dp/9090332561
 
 - A fragment in OpenGL is all the data required for OpenGL to render a single pixel.
 

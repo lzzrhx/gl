@@ -3,7 +3,7 @@
 	[
 		{
 			"path": ".",
-		}
+		},
 	],
 	"build_systems":
 	[
@@ -20,8 +20,8 @@
 		{
 			"odin":
 			{
-				"enabled": true
-			}
-		}
+				"enabled": true,
+			},
+		},
 	},
 }
