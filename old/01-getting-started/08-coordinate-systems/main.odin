@@ -18,133 +18,14 @@ GL_VERSION_MAJOR :: 3
 GL_VERSION_MINOR :: 3
 VERTEX_SHADER :: "./shaders/vertex.vs"
 FRAGMENT_SHADER :: "./shaders/fragment.fs"
-CURSOR_SENSITIVITY :: 0.1
-
-Game :: struct {
-    window: glfw.WindowHandle,
-    cursor_prev: glsl.vec2,
-    cursor_moved: bool,
-}
-
-game := &Game{
-    cursor_prev = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
-}
-
-camera := &Camera{
-    pos   = {0.0, 0.0, 3.0},
-    up    = {0, 1, 0},
-    front = {0, 0, -1},
-    dir   = 0,
-    speed = 2.5,
-    yaw   = -90,
-    pitch = 0,
-    fov   = 45.0,
-}
-
-// Set vertices
-vertices := [?]f32 {
-    // Positions:      // Texture coords:
-    -0.5, -0.5, -0.5,  0.0, 0.0,
-     0.5, -0.5, -0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-    -0.5,  0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 0.0,
-
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
-    -0.5,  0.5,  0.5,  0.0, 1.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-
-    -0.5,  0.5,  0.5,  1.0, 0.0,
-    -0.5,  0.5, -0.5,  1.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-    -0.5,  0.5,  0.5,  1.0, 0.0,
-
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-
-    -0.5,  0.5, -0.5,  0.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-    -0.5,  0.5,  0.5,  0.0, 0.0,
-    -0.5,  0.5, -0.5,  0.0, 1.0,
-}
-
-// Set cube positions
-cube_positions := [?]glsl.vec3{
-    {0.0, 0.0, 0.0},
-    {2.0, 5.0, -15.0},
-    {-1.5, -2.2, -2.5},
-    {-3.8, -2.0, -12.3},
-    {2.4, -0.4, -3.5},
-    {-1.7, 3.0, -7.5},
-    {1.3, -2.0, -2.5},
-    {1.5, 2.0, -2.5},
-    {1.5, 0.2, -1.5},
-    {-1.3, 1.0, -1.5},
-}
 
 glfw_framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width: i32, height: i32) {
     gl.Viewport(0, 0, width, height)
 }
 
-glfw_cursor_pos_callback :: proc "c" (window: glfw.WindowHandle, x, y: f64) {
-    if !game.cursor_moved {
-        game.cursor_prev = {f32(x), f32(y)}
-        game.cursor_moved = true
-    }
-    delta: glsl.vec2 = {f32(x) - game.cursor_prev.x, game.cursor_prev.y - f32(y)}
-    delta *= CURSOR_SENSITIVITY
-    game.cursor_prev = {f32(x), f32(y)}
-    camera.yaw += delta.x
-    camera.pitch += delta.y
-    if camera.pitch > 89.0 { camera.pitch = 89.0}
-    if camera.pitch < -89.0 { camera.pitch = -89.0}
-    camera.front = glsl.normalize_vec3({
-        math.cos_f32(glsl.radians_f32(camera.yaw)) * math.cos_f32(glsl.radians_f32(camera.pitch)),
-        math.sin_f32(glsl.radians_f32(camera.pitch)),
-        math.sin_f32(glsl.radians_f32(camera.yaw)) * math.cos_f32(glsl.radians_f32(camera.pitch))
-    })
-}
-
-glfw_scroll_callback :: proc "c" (window: glfw.WindowHandle, x, y: f64) {
-    camera.fov -= f32(y)
-    if camera.fov < 1.0 { camera.fov = 1.0 }
-    if camera.fov > 45.0 { camera.fov = 45.0 }
-}
-
-input :: proc "c" (time_delta: f64) {
-    if glfw.GetKey(game.window, glfw.KEY_ESCAPE) == glfw.PRESS {
-        glfw.SetWindowShouldClose(game.window, true)
-    }
-    if glfw.GetKey(game.window, glfw.KEY_W) == glfw.PRESS {
-        camera.pos += camera.speed * f32(time_delta) * camera.front
-    }
-    else if glfw.GetKey(game.window, glfw.KEY_S) == glfw.PRESS {
-        camera.pos -= camera.speed * f32(time_delta) * camera.front
-    }
-    if glfw.GetKey(game.window, glfw.KEY_A) == glfw.PRESS {
-        camera.pos -= camera.speed * f32(time_delta) * glsl.normalize_vec3(glsl.cross_vec3(camera.front, camera.up))
-    }
-    else if glfw.GetKey(game.window, glfw.KEY_D) == glfw.PRESS {
-        camera.pos += camera.speed * f32(time_delta) * glsl.normalize_vec3(glsl.cross_vec3(camera.front, camera.up))
+input :: proc "c" (window: glfw.WindowHandle) {
+    if glfw.GetKey(window, glfw.KEY_ESCAPE) == glfw.PRESS {
+        glfw.SetWindowShouldClose(window, true)
     }
 }
 
@@ -162,22 +43,81 @@ main :: proc() {
     glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, GL_VERSION_MAJOR)
     glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, GL_VERSION_MINOR)
     glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-    game.window = glfw.CreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, nil, nil)
-    if game.window == nil {
+    window := glfw.CreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, nil, nil)
+    if window == nil {
         log.errorf("GLFW window creation failed.")
         glfw.Terminate()
         os.exit(1)
     }
-    glfw.MakeContextCurrent(game.window)
+    glfw.MakeContextCurrent(window)
     gl.load_up_to(GL_VERSION_MAJOR, GL_VERSION_MINOR, glfw.gl_set_proc_address)
     gl.Viewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
-    glfw.SetFramebufferSizeCallback(game.window, glfw_framebuffer_size_callback)
+    glfw.SetFramebufferSizeCallback(window, glfw_framebuffer_size_callback)
 
     // Load shaders from file
     shader_program, ok := gl.load_shaders_file(VERTEX_SHADER, FRAGMENT_SHADER)
     if !ok {
         log.errorf("Shader loading failed.")
         os.exit(1)
+    }
+
+    // Set vertices
+    vertices := [?]f32 {
+        // Positions:      // Texture coords:
+        -0.5, -0.5, -0.5,  0.0, 0.0,
+         0.5, -0.5, -0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 0.0,
+
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+        -0.5,  0.5,  0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+
+        -0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5,  0.5,  1.0, 0.0,
+
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+    }
+    // Set cube positions
+    cube_positions := [?]glsl.vec3{
+        {0.0, 0.0, 0.0},
+        {2.0, 5.0, -15.0},
+        {-1.5, -2.2, -2.5},
+        {-3.8, -2.0, -12.3},
+        {2.4, -0.4, -3.5},
+        {-1.7, 3.0, -7.5},
+        {1.3, -2.0, -2.5},
+        {1.5, 2.0, -2.5},
+        {1.5, 0.2, -1.5},
+        {-1.3, 1.0, -1.5},
     }
 
     // Declare vertex array object
@@ -237,41 +177,19 @@ main :: proc() {
     gl.GenerateMipmap(gl.TEXTURE_2D)
     stbi.image_free(img)
 
-    // Enable depth testing
-    gl.Enable(gl.DEPTH_TEST)
-
-    // Enable wireframe mode
-    //gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
-
-    // Hide mouse cursor and set the mouse control callback functions
-    glfw.SetInputMode(game.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
-    glfw.SetCursorPosCallback(game.window, glfw_cursor_pos_callback)
-    glfw.SetScrollCallback(game.window, glfw_scroll_callback)
-
     // Set the shader program
     gl.UseProgram(shader_program)
-
     // Set the texture units for the shader samplers
     shader_set_int(shader_program, "tex0", 0)
     shader_set_int(shader_program, "tex1", 1)
+    // Enable depth testing
+    gl.Enable(gl.DEPTH_TEST)
 
-    // Time measurement variables
-    time_current: f64
-    time_prev: f64
-    dt: f64
+    //gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 
     // Main Loop
-    for !glfw.WindowShouldClose(game.window) {
-
-        // Calculate deltatime
-        time_current = glfw.GetTime()
-        dt = time_current - time_prev
-        time_prev = time_current
-
-        // Handle input
-        input(dt)
-
-        // Clear screen
+    for !glfw.WindowShouldClose(window) {
+        input(window)
         gl.ClearColor(0.2, 0.3, 0.3, 1.0)
         gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
@@ -284,17 +202,19 @@ main :: proc() {
         // Bind texture object (1)
         gl.BindTexture(gl.TEXTURE_2D, texture1)
 
+        // View matrix
+        view: glsl.mat4 = 1
+        view *= glsl.mat4Translate({0.0, 0.0, -3.0})
+        shader_set_mat4(shader_program, "view", view)
+
         // Projection matrix
         projection: glsl.mat4 = 1
-        projection *= glsl.mat4Perspective(glsl.radians_f32(camera.fov), f32(f32(WINDOW_WIDTH) / f32(WINDOW_HEIGHT)), 0.1, 100.0)
+        projection *= glsl.mat4Perspective(glsl.radians_f32(45.0), f32(f32(WINDOW_WIDTH) / f32(WINDOW_HEIGHT)), 0.1, 100.0)
         shader_set_mat4(shader_program, "projection", projection)
-        
-        // View matrix
-        view: glsl.mat4 = glsl.mat4LookAt(camera.pos, camera.pos + camera.front, camera.up)
-        shader_set_mat4(shader_program, "view", view)
-        
+
         // Bind vertex array object
         gl.BindVertexArray(vao)
+
         // Draw all 10 cubes
         for position, i in cube_positions {
             // Model matrix
@@ -302,11 +222,12 @@ main :: proc() {
             model *= glsl.mat4Translate(position)
             model *= glsl.mat4Rotate({0.5, 1.0, 0.0}, f32(glfw.GetTime()) * glsl.radians_f32(20.0) * f32(i+1))
             shader_set_mat4(shader_program, "model", model)
+
             // Draw primitves
             gl.DrawArrays(gl.TRIANGLES, 0, 36)
         }
 
-        glfw.SwapBuffers(game.window)
+        glfw.SwapBuffers(window)
         glfw.PollEvents()
         mem_check_bad_free(&tracking_allocator)
     }
@@ -314,6 +235,7 @@ main :: proc() {
     // Exit the program
     gl.DeleteVertexArrays(1, &vao)
     gl.DeleteBuffers(1, &vbo)
+    //gl.DeleteBuffers(1, &ebo)
     gl.DeleteProgram(shader_program)
     glfw.Terminate()
 }
