@@ -14,8 +14,6 @@ struct Light {
 };
 
 // Uniforms
-uniform vec3 lightColor;
-uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
@@ -32,7 +30,7 @@ void main()
 {
     // Calculate vectors
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
+    vec3 lightDir = normalize(light.pos - FragPos);
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     // Calculate light color values

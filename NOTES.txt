@@ -29,7 +29,7 @@
      [X]  2.2:  Basic Lighting
      [X]  2.3:  Materials
      [X]  2.4:  Lighting maps
-     [-]  2.5:  Light casters
+     [X]  2.5:  Light casters
      [-]  2.6:  Multiple lights
      [-]  2.7:  Review
    [-]  3: Model Loading

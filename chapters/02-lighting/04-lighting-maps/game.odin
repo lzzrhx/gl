@@ -166,7 +166,7 @@ game_render :: proc(game: ^Game) {
         shader_set_mat4(game.shader_program, "projectionMat", projectionMat)
         shader_set_mat4(game.shader_program, "viewMat", viewMat)
         shader_set_vec3(game.shader_program, "viewPos", game.camera.pos)
-        shader_set_vec3(game.shader_program, "lightPos", game.light.pos)
+        shader_set_vec3(game.shader_program, "light.pos", game.light.pos)
         shader_set_vec3(game.shader_program, "light.ambient", game.light.ambient)
         shader_set_vec3(game.shader_program, "light.diffuse", game.light.diffuse)
         shader_set_vec3(game.shader_program, "light.specular", game.light.specular)
