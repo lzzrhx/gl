@@ -24,14 +24,14 @@
      [X]  1.8:  Coordinate Systems
      [X]  1.9:  Camera
      [X]  1.10: Review
-   [-]  2: Lighting
+   [X]  2: Lighting
      [X]  2.1:  Colors
      [X]  2.2:  Basic Lighting
      [X]  2.3:  Materials
      [X]  2.4:  Lighting maps
      [X]  2.5:  Light casters
-     [-]  2.6:  Multiple lights
-     [-]  2.7:  Review
+     [X]  2.6:  Multiple lights
+     [X]  2.7:  Review
    [-]  3: Model Loading
      [-]  3.1:  Assimp
      [-]  3.2:  Mesh
