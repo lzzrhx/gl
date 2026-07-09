@@ -1,5 +1,8 @@
 # Learn OpenGL
 
+> [!WARNING]
+> Repository moved to https://codeberg.org/lzzrhx/learn-opengl
+
 An OpenGL project made with the Odin programming language by following the course [Learn OpenGL](https://learnopengl.com/) by Joey de Vries.
 
 > [!TIP]
